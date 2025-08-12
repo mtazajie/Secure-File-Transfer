@@ -1,0 +1,164 @@
+# Static files for Secure File Transfer
+
+# Create directory for static files
+import os
+
+# CSS for custom styling
+css_content = """
+/* Custom CSS for Secure File Transfer */
+
+/* Additional animations and effects */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* Loading spinner for file operations */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* File upload drag and drop styles */
+.file-upload-area.drag-over {
+    border-color: #667eea !important;
+    background: rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Security badge animations */
+.security-badge {
+    transition: all 0.3s ease;
+}
+
+.security-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Face verification camera styles */
+.camera-overlay {
+    position: relative;
+    display: inline-block;
+}
+
+.camera-overlay::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 250px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* Progress bars */
+.progress-bar-animated {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 0;
+    }
+    
+    .feature-card {
+        margin: 10px 0;
+        padding: 20px;
+    }
+    
+    .card {
+        margin: 10px 0;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+    
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #667eea;
+        color: white;
+    }
+}
+"""
+
+# Create static directory structure
+os.makedirs('static/css', exist_ok=True)
+os.makedirs('static/js', exist_ok=True)
+os.makedirs('static/img', exist_ok=True)
+
+# Write CSS file
+with open('static/css/custom.css', 'w') as f:
+    f.write(css_content)
+
+print("Static files created successfully!")

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Setup Face Recognition - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-face-smile fa-3x text-primary mb-3"></i>
+                    <h2>Setup Facial Recognition</h2>
+                    <p class="text-muted">Complete your security setup with biometric authentication</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label for="face_image" class="form-label">
+                            <i class="fas fa-camera"></i> Upload Your Photo
+                        </label>
+                        <input type="file" class="form-control" id="face_image" name="face_image" 
+                               accept="image/*" required>
+                        <div class="form-text">
+                            <small>Upload a clear photo of your face for recognition setup</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb"></i> Photo Guidelines:</h6>
+                        <ul class="mb-0">
+                            <li>Face should be clearly visible and well-lit</li>
+                            <li>Look directly at the camera</li>
+                            <li>Remove sunglasses or face coverings</li>
+                            <li>Use a neutral expression</li>
+                            <li>Avoid shadows on your face</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check"></i> Complete Registration
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-info-circle text-info"></i> Registration Progress
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-user-plus text-success"></i>
+                            <small class="d-block">1. Account ✓</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-mobile-alt text-success"></i>
+                            <small class="d-block">2. 2FA Setup ✓</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-face-smile text-primary"></i>
+                            <small class="d-block">3. Face Setup</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 alert alert-warning">
+                    <small>
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>Privacy Note:</strong> Your facial data is stored locally and encrypted. 
+                        It is never transmitted to external servers and is used solely for authentication purposes.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.getElementById('face_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Create preview
+            const preview = document.createElement('img');
+            preview.src = e.target.result;
+            preview.className = 'img-fluid mt-3 rounded';
+            preview.style.maxHeight = '200px';
+            
+            // Remove existing preview
+            const existingPreview = document.querySelector('.image-preview');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+            
+            // Add new preview
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'image-preview text-center';
+            previewContainer.appendChild(preview);
+            
+            document.querySelector('.form-text').after(previewContainer);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

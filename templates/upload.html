@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Upload File - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row py-4">
+    <div class="col-12">
+        <h1 class="text-white mb-4">
+            <i class="fas fa-upload"></i> Upload File
+        </h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-5">
+                <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <!-- File Upload Area -->
+                    <div class="file-upload-area mb-4" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                        <h5>Drag & Drop Files Here</h5>
+                        <p class="text-muted">or click to browse</p>
+                        <input type="file" class="form-control" id="file" name="file" required style="display: none;">
+                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('file').click()">
+                            <i class="fas fa-folder-open"></i> Choose File
+                        </button>
+                    </div>
+
+                    <!-- File Info Display -->
+                    <div id="fileInfo" style="display: none;" class="alert alert-info">
+                        <h6><i class="fas fa-file"></i> Selected File:</h6>
+                        <div id="fileName"></div>
+                        <div id="fileSize" class="small text-muted"></div>
+                    </div>
+
+                    <!-- Encryption Password -->
+                    <div class="mb-4">
+                        <label for="encryption_password" class="form-label">
+                            <i class="fas fa-key"></i> Encryption Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="encryption_password" 
+                                   name="encryption_password" required 
+                                   placeholder="Enter a strong password to encrypt your file">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            <small>
+                                <i class="fas fa-info-circle"></i>
+                                This password will be used to encrypt your file. Store it safely - 
+                                you'll need it to decrypt and download the file later.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Password Strength Indicator -->
+                    <div class="mb-4">
+                        <div class="password-strength">
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar" id="strengthBar" style="width: 0%"></div>
+                            </div>
+                            <small id="strengthText" class="text-muted">Enter password to check strength</small>
+                        </div>
+                    </div>
+
+                    <!-- Upload Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn">
+                            <i class="fas fa-upload"></i> Encrypt and Upload File
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Upload Progress -->
+                <div id="uploadProgress" style="display: none;" class="mt-4">
+                    <h6><i class="fas fa-cog fa-spin"></i> Processing...</h6>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             style="width: 100%"></div>
+                    </div>
+                    <small class="text-muted">Encrypting and securing your file...</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Information -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-shield-alt text-success"></i> Security Features
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> AES-256 encryption</li>
+                            <li><i class="fas fa-check text-success"></i> PBKDF2 key derivation</li>
+                            <li><i class="fas fa-check text-success"></i> Salt-based security</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> SHA-256 file hashing</li>
+                            <li><i class="fas fa-check text-success"></i> Integrity verification</li>
+                            <li><i class="fas fa-check text-success"></i> Metadata protection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('file');
+const fileInfo = document.getElementById('fileInfo');
+const fileName = document.getElementById('fileName');
+const fileSize = document.getElementById('fileSize');
+const uploadForm = document.getElementById('uploadForm');
+const uploadBtn = document.getElementById('uploadBtn');
+const uploadProgress = document.getElementById('uploadProgress');
+const passwordInput = document.getElementById('encryption_password');
+const togglePassword = document.getElementById('togglePassword');
+const strengthBar = document.getElementById('strengthBar');
+const strengthText = document.getElementById('strengthText');
+
+// Drag and drop functionality
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-primary');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-primary');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-primary');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        showFileInfo(files[0]);
+    }
+});
+
+dropZone.addEventListener('click', () => {
+    fileInput.click();
+});
+
+// File input change
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        showFileInfo(e.target.files[0]);
+    }
+});
+
+// Show file information
+function showFileInfo(file) {
+    fileName.textContent = file.name;
+    fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
+    fileInfo.style.display = 'block';
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Password toggle
+togglePassword.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.innerHTML = type === 'password' 
+        ? '<i class="fas fa-eye"></i>' 
+        : '<i class="fas fa-eye-slash"></i>';
+});
+
+// Password strength checker
+passwordInput.addEventListener('input', checkPasswordStrength);
+
+function checkPasswordStrength() {
+    const password = passwordInput.value;
+    let strength = 0;
+    let feedback = [];
+
+    if (password.length >= 8) strength += 1;
+    else feedback.push('At least 8 characters');
+
+    if (/[a-z]/.test(password)) strength += 1;
+    else feedback.push('Lowercase letter');
+
+    if (/[A-Z]/.test(password)) strength += 1;
+    else feedback.push('Uppercase letter');
+
+    if (/[0-9]/.test(password)) strength += 1;
+    else feedback.push('Number');
+
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    else feedback.push('Special character');
+
+    const percentage = (strength / 5) * 100;
+    strengthBar.style.width = percentage + '%';
+
+    if (strength <= 2) {
+        strengthBar.className = 'progress-bar bg-danger';
+        strengthText.textContent = 'Weak - ' + feedback.join(', ');
+        strengthText.className = 'text-danger';
+    } else if (strength <= 3) {
+        strengthBar.className = 'progress-bar bg-warning';
+        strengthText.textContent = 'Medium - ' + feedback.join(', ');
+        strengthText.className = 'text-warning';
+    } else if (strength <= 4) {
+        strengthBar.className = 'progress-bar bg-info';
+        strengthText.textContent = 'Good';
+        strengthText.className = 'text-info';
+    } else {
+        strengthBar.className = 'progress-bar bg-success';
+        strengthText.textContent = 'Excellent';
+        strengthText.className = 'text-success';
+    }
+}
+
+// Form submission
+uploadForm.addEventListener('submit', (e) => {
+    if (!fileInput.files.length) {
+        e.preventDefault();
+        alert('Please select a file to upload');
+        return;
+    }
+
+    if (passwordInput.value.length < 8) {
+        e.preventDefault();
+        alert('Password must be at least 8 characters long');
+        return;
+    }
+
+    // Show upload progress
+    uploadBtn.disabled = true;
+    uploadProgress.style.display = 'block';
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Face Verification - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-face-smile fa-3x text-primary mb-3"></i>
+                    <h2>Face Verification</h2>
+                    <p class="text-muted">Complete login with facial recognition</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" id="faceForm">
+                    <div class="mb-4">
+                        <label for="face_image" class="form-label">
+                            <i class="fas fa-camera"></i> Capture or Upload Your Photo
+                        </label>
+                        <input type="file" class="form-control" id="face_image" name="face_image" 
+                               accept="image/*" required>
+                        <div class="form-text">
+                            <small>Use your camera or upload a photo for verification</small>
+                        </div>
+                    </div>
+
+                    <!-- Camera capture option -->
+                    <div class="text-center mb-4">
+                        <button type="button" class="btn btn-outline-primary" id="captureBtn">
+                            <i class="fas fa-camera"></i> Use Camera
+                        </button>
+                    </div>
+
+                    <!-- Video element for camera (initially hidden) -->
+                    <div id="cameraSection" style="display: none;">
+                        <video id="video" width="100%" height="300" autoplay style="border-radius: 10px;"></video>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-success" id="snapBtn">
+                                <i class="fas fa-camera"></i> Take Photo
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2" id="stopCameraBtn">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb"></i> Verification Tips:</h6>
+                        <ul class="mb-0">
+                            <li>Ensure good lighting on your face</li>
+                            <li>Look directly at the camera</li>
+                            <li>Use the same orientation as your registration photo</li>
+                            <li>Remove any face coverings</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check"></i> Verify and Login
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('login') }}" class="text-decoration-none">
+                        <i class="fas fa-arrow-left"></i> Back to Login
+                    </a>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-info-circle text-info"></i> Login Progress
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-user-lock text-success"></i>
+                            <small class="d-block">1. Credentials ✓</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-mobile-alt text-success"></i>
+                            <small class="d-block">2. 2FA Code ✓</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-face-smile text-primary"></i>
+                            <small class="d-block">3. Face Scan</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+let stream = null;
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const captureBtn = document.getElementById('captureBtn');
+const snapBtn = document.getElementById('snapBtn');
+const stopCameraBtn = document.getElementById('stopCameraBtn');
+const cameraSection = document.getElementById('cameraSection');
+const fileInput = document.getElementById('face_image');
+
+// Start camera
+captureBtn.addEventListener('click', async () => {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                width: { ideal: 640 }, 
+                height: { ideal: 480 },
+                facingMode: 'user'
+            } 
+        });
+        video.srcObject = stream;
+        cameraSection.style.display = 'block';
+        captureBtn.style.display = 'none';
+    } catch (err) {
+        alert('Camera access denied or not available');
+        console.error('Camera error:', err);
+    }
+});
+
+// Take photo
+snapBtn.addEventListener('click', () => {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+    
+    // Convert to blob and create file
+    canvas.toBlob((blob) => {
+        const file = new File([blob], 'face_verification.jpg', { type: 'image/jpeg' });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        
+        // Show preview
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);
+        img.className = 'img-fluid mt-3 rounded';
+        img.style.maxHeight = '200px';
+        
+        // Remove existing preview
+        const existingPreview = document.querySelector('.image-preview');
+        if (existingPreview) {
+            existingPreview.remove();
+        }
+        
+        // Add new preview
+        const previewContainer = document.createElement('div');
+        previewContainer.className = 'image-preview text-center';
+        previewContainer.appendChild(img);
+        document.querySelector('.form-text').after(previewContainer);
+        
+        stopCamera();
+    }, 'image/jpeg', 0.8);
+});
+
+// Stop camera
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    cameraSection.style.display = 'none';
+    captureBtn.style.display = 'inline-block';
+}
+
+stopCameraBtn.addEventListener('click', stopCamera);
+
+// File input preview
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.createElement('img');
+            preview.src = e.target.result;
+            preview.className = 'img-fluid mt-3 rounded';
+            preview.style.maxHeight = '200px';
+            
+            const existingPreview = document.querySelector('.image-preview');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+            
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'image-preview text-center';
+            previewContainer.appendChild(preview);
+            
+            document.querySelector('.form-text').after(previewContainer);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', stopCamera);
+</script>
+{% endblock %}
+{% endblock %}

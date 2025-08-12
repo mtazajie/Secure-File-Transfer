@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+                    <h2>Login</h2>
+                    <p class="text-muted">Access your secure file transfer account</p>
+                </div>
+
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="totp_code" class="form-label">
+                            <i class="fas fa-mobile-alt"></i> 2FA Code
+                        </label>
+                        <input type="text" class="form-control" id="totp_code" name="totp_code" 
+                               placeholder="Enter 6-digit code" maxlength="6" required>
+                        <div class="form-text">
+                            <small>Enter the code from your authenticator app</small>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-right"></i> Continue to Face Verification
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p>Don't have an account? 
+                        <a href="{{ url_for('register') }}" class="text-decoration-none">Register here</a>
+                    </p>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-info-circle text-info"></i> Login Process
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-user-lock text-primary"></i>
+                            <small class="d-block">1. Credentials</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-mobile-alt text-muted"></i>
+                            <small class="d-block">2. 2FA Code</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-face-smile text-muted"></i>
+                            <small class="d-block">3. Face Scan</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+// Auto-format TOTP input
+document.getElementById('totp_code').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length > 6) {
+        value = value.substring(0, 6);
+    }
+    e.target.value = value;
+});
+
+// Auto-submit when 6 digits are entered
+document.getElementById('totp_code').addEventListener('keyup', function(e) {
+    if (e.target.value.length === 6 && /^\d{6}$/.test(e.target.value)) {
+        // Optional: Auto-submit after a short delay
+        setTimeout(() => {
+            if (document.getElementById('username').value && 
+                document.getElementById('password').value) {
+                // Could auto-submit here if desired
+                // document.querySelector('form').submit();
+            }
+        }, 500);
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

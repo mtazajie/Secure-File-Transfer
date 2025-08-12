@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-shield-alt"></i> Secure File Transfer
+        </h1>
+        <p class="lead mb-5">
+            Advanced encryption, 2FA, and facial recognition for ultimate security
+        </p>
+        
+        <div class="security-badges mb-5">
+            <span class="security-badge">
+                <i class="fas fa-lock"></i> AES-256 Encryption
+            </span>
+            <span class="security-badge">
+                <i class="fas fa-mobile-alt"></i> 2FA Authentication
+            </span>
+            <span class="security-badge">
+                <i class="fas fa-face-smile"></i> Facial Recognition
+            </span>
+            <span class="security-badge">
+                <i class="fas fa-fingerprint"></i> File Hashing
+            </span>
+            <span class="security-badge">
+                <i class="fas fa-server"></i> SFTP Support
+            </span>
+        </div>
+
+        {% if not current_user.is_authenticated %}
+        <div class="d-grid gap-2 d-md-block">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-user-plus"></i> Get Started
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+        {% else %}
+        <div class="d-grid gap-2 d-md-block">
+            <a href="{{ url_for('upload_file') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-upload"></i> Upload File
+            </a>
+            <a href="{{ url_for('file_list') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-folder"></i> View Files
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-lock feature-icon"></i>
+                <h4>Military-Grade Encryption</h4>
+                <p>Files are encrypted using AES-256 encryption with PBKDF2 key derivation, ensuring your data is protected against even the most sophisticated attacks.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt feature-icon"></i>
+                <h4>Multi-Factor Security</h4>
+                <p>Combines password authentication, TOTP-based 2FA, and facial recognition for three layers of security protecting your account.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-fingerprint feature-icon"></i>
+                <h4>File Integrity</h4>
+                <p>SHA-256 hashing ensures file integrity. Every file is verified during upload and download to guarantee it hasn't been tampered with.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-face-smile feature-icon"></i>
+                <h4>Facial Recognition</h4>
+                <p>Advanced facial recognition technology adds an extra layer of biometric security, ensuring only you can access your files.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-dollar-sign feature-icon"></i>
+                <h4>Cost-Effective</h4>
+                <p>Perfect for developing countries - no expensive cloud subscriptions. Run on your own infrastructure with minimal costs.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-server feature-icon"></i>
+                <h4>SFTP Integration</h4>
+                <p>Built-in SFTP support for secure file transfer over networks, making it ideal for business and personal use.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center text-white">
+            <h2 class="mb-4">Why Choose Our Solution?</h2>
+            <p class="lead">
+                Designed specifically for developing countries where cloud services are expensive. 
+                Our self-hosted solution provides enterprise-grade security without the recurring costs.
+                Deploy on any server, from a simple VPS to your own hardware.
+            </p>
+            <div class="mt-4">
+                <h5>Perfect for:</h5>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <p><i class="fas fa-check text-success"></i> Small businesses</p>
+                        <p><i class="fas fa-check text-success"></i> Educational institutions</p>
+                        <p><i class="fas fa-check text-success"></i> Government offices</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><i class="fas fa-check text-success"></i> Healthcare providers</p>
+                        <p><i class="fas fa-check text-success"></i> Legal firms</p>
+                        <p><i class="fas fa-check text-success"></i> Personal use</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

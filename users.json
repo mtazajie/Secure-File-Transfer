@@ -1,0 +1,18 @@
+{
+  "1": {
+    "id": "1",
+    "username": "Kidus",
+    "password_hash": "scrypt:32768:8:1$QBBNWt5s6b7TJoct$296f7e652f1b97d4b1bfbec32434b71c785dc4ed5e9af889d757e8aece34a060b0a14cf174b8512de3f9343041134d2d8e16bc15271ade08f138f80167ff39fb",
+    "email": "kidyoh789@gmail.com",
+    "totp_secret": "HLOQNA2RIF6RMGBGUAO57VMOC32RSUVM",
+    "face_data": null
+  },
+  "2": {
+    "id": "2",
+    "username": "birikity",
+    "password_hash": "scrypt:32768:8:1$xq16tkzW5U4Ru69E$276ca5f26301f3fc400d8b74a544bd1a0fdd468cca7466cf15d54a4dac06996c36a09d1a6ca401d1b90918f16e159211048f490d05b5415453384765fe9ef6a4",
+    "email": "Kidusyoh@outlook.com",
+    "totp_secret": "DBDAJAZOQBMXEMT4NAX6YLRTRDR77QWH",
+    "face_data": null
+  }
+}

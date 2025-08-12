@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Download File - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row py-4">
+    <div class="col-12">
+        <h1 class="text-white mb-4">
+            <i class="fas fa-download"></i> Download File
+        </h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                    <h4>Decrypt and Download</h4>
+                    <p class="text-muted">Enter the password to decrypt your file</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('decrypt_download') }}" id="decryptForm">
+                    <input type="hidden" name="encrypted_filename" value="{{ encrypted_filename }}">
+                    
+                    <div class="mb-4">
+                        <label for="decryption_password" class="form-label">
+                            <i class="fas fa-key"></i> Decryption Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="decryption_password" 
+                                   name="decryption_password" required 
+                                   placeholder="Enter the password used during encryption">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            <small>
+                                <i class="fas fa-info-circle"></i>
+                                This must be the same password you used when uploading the file.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="decryptBtn">
+                            <i class="fas fa-unlock"></i> Decrypt and Download
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Processing indicator -->
+                <div id="processingIndicator" style="display: none;" class="mt-4 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Decrypting file...</p>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('file_list') }}" class="text-decoration-none">
+                        <i class="fas fa-arrow-left"></i> Back to Files
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Information -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-shield-alt text-success"></i> Security Information
+                </h6>
+                <div class="small">
+                    <div class="mb-2">
+                        <i class="fas fa-lock text-primary"></i>
+                        <strong>Encryption:</strong> Your file is encrypted with AES-256 using your password
+                    </div>
+                    <div class="mb-2">
+                        <i class="fas fa-fingerprint text-primary"></i>
+                        <strong>Integrity:</strong> File hash will be verified during download
+                    </div>
+                    <div class="mb-2">
+                        <i class="fas fa-shield-alt text-primary"></i>
+                        <strong>Security:</strong> Decryption happens locally on the server
+                    </div>
+                    <div>
+                        <i class="fas fa-trash text-primary"></i>
+                        <strong>Privacy:</strong> Temporary files are automatically deleted
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Process -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-info-circle text-info"></i> Download Process
+                </h6>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <i class="fas fa-key fa-2x text-primary mb-2"></i>
+                        <small class="d-block">1. Password Verification</small>
+                    </div>
+                    <div class="col-4">
+                        <i class="fas fa-unlock fa-2x text-primary mb-2"></i>
+                        <small class="d-block">2. File Decryption</small>
+                    </div>
+                    <div class="col-4">
+                        <i class="fas fa-download fa-2x text-primary mb-2"></i>
+                        <small class="d-block">3. Secure Download</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+const passwordInput = document.getElementById('decryption_password');
+const togglePassword = document.getElementById('togglePassword');
+const decryptForm = document.getElementById('decryptForm');
+const decryptBtn = document.getElementById('decryptBtn');
+const processingIndicator = document.getElementById('processingIndicator');
+
+// Password toggle
+togglePassword.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.innerHTML = type === 'password' 
+        ? '<i class="fas fa-eye"></i>' 
+        : '<i class="fas fa-eye-slash"></i>';
+});
+
+// Form submission
+decryptForm.addEventListener('submit', (e) => {
+    if (!passwordInput.value.trim()) {
+        e.preventDefault();
+        alert('Please enter the decryption password');
+        return;
+    }
+
+    // Show processing indicator
+    decryptBtn.disabled = true;
+    processingIndicator.style.display = 'block';
+    
+    // Change button text
+    decryptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Decrypting...';
+});
+
+// Handle download errors (if redirected back)
+window.addEventListener('load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error')) {
+        // Reset form state
+        decryptBtn.disabled = false;
+        processingIndicator.style.display = 'none';
+        decryptBtn.innerHTML = '<i class="fas fa-unlock"></i> Decrypt and Download';
+    }
+});
+
+// Auto-focus password field
+passwordInput.focus();
+
+// Enter key handling
+passwordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        decryptForm.submit();
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

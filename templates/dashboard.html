@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row py-4">
+    <div class="col-12">
+        <h1 class="text-white mb-4">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Actions -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-bolt text-primary"></i> Quick Actions
+                </h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('upload_file') }}" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload New File
+                    </a>
+                    <a href="{{ url_for('file_list') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-folder"></i> View All Files
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Status -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-shield-alt text-success"></i> Security Status
+                </h5>
+                <div class="security-status">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><i class="fas fa-lock text-success"></i> Password Protection</span>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><i class="fas fa-mobile-alt text-success"></i> Two-Factor Auth</span>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><i class="fas fa-face-smile text-success"></i> Facial Recognition</span>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-fingerprint text-success"></i> File Integrity</span>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Features Overview -->
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-star text-warning"></i> Available Features
+                </h5>
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <i class="fas fa-lock fa-2x text-primary mb-2"></i>
+                        <h6>AES-256 Encryption</h6>
+                        <small class="text-muted">Military-grade file encryption</small>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <i class="fas fa-fingerprint fa-2x text-primary mb-2"></i>
+                        <h6>File Hashing</h6>
+                        <small class="text-muted">SHA-256 integrity verification</small>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <i class="fas fa-server fa-2x text-primary mb-2"></i>
+                        <h6>SFTP Support</h6>
+                        <small class="text-muted">Secure file transfer protocol</small>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
+                        <h6>Multi-layer Security</h6>
+                        <small class="text-muted">3-factor authentication</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Usage Tips -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-lightbulb text-warning"></i> Usage Tips
+                </h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Use strong encryption passwords for your files
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Keep your 2FA device secure and backed up
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Verify file hashes before and after transfer
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Update your face photo if appearance changes
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Info -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-info-circle text-info"></i> System Information
+                </h5>
+                <div class="small">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Encryption:</span>
+                        <span class="text-muted">AES-256-CBC</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Key Derivation:</span>
+                        <span class="text-muted">PBKDF2-SHA256</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>File Hashing:</span>
+                        <span class="text-muted">SHA-256</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>2FA Algorithm:</span>
+                        <span class="text-muted">TOTP (RFC 6238)</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Face Recognition:</span>
+                        <span class="text-muted">dlib + face_recognition</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

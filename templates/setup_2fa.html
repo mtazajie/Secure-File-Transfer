@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Setup 2FA - Secure File Transfer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                    <h2>Setup Two-Factor Authentication</h2>
+                    <p class="text-muted">Secure your account with TOTP authentication</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-qrcode"></i> Step 1: Scan QR Code</h5>
+                        <p>Use your authenticator app to scan this QR code:</p>
+                        <div class="text-center mb-3">
+                            <img src="data:image/png;base64,{{ qr_code }}" class="img-fluid" style="max-width: 200px;">
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <strong>Recommended apps:</strong><br>
+                                • Google Authenticator<br>
+                                • Microsoft Authenticator<br>
+                                • Authy<br>
+                                • 1Password
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-key"></i> Step 2: Manual Setup</h5>
+                        <p>Or enter this secret key manually:</p>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" value="{{ totp_secret }}" readonly>
+                            <div class="form-text">
+                                <small>Save this secret key in a safe place as a backup</small>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <small>
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Important:</strong> Save your secret key! 
+                                If you lose access to your authenticator app, 
+                                you'll need this to regain access to your account.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('setup_face') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-right"></i> Continue to Face Setup
+                    </a>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-info-circle text-info"></i> Registration Progress
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-user-plus text-success"></i>
+                            <small class="d-block">1. Account ✓</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-mobile-alt text-primary"></i>
+                            <small class="d-block">2. 2FA Setup</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-face-smile text-muted"></i>
+                            <small class="d-block">3. Face Setup</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
